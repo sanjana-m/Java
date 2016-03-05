@@ -10,9 +10,11 @@ public class Transaction implements Comparable<Transaction> {
 	public String type;
 	public double units;
 	public String name;
+	public String code;
 	
-	public Transaction(String name, double amount, String date1, String type, double units){
+	public Transaction(String name, String code, double amount, String date1, String type, double units){
 		this.amount = amount;
+		this.code = code;
 		this.type = type;
 		this.units = units;
 		this.name = name;
@@ -37,7 +39,11 @@ public class Transaction implements Comparable<Transaction> {
 	public double getAmount(){
 		return this.amount;
 	}
-	
+
+	public String getCode(){
+		return this.code;
+	}
+
 	public String getType(){
 		return this.type;
 	}
@@ -63,6 +69,10 @@ public class Transaction implements Comparable<Transaction> {
 		this.name = name;
 	}
 
+	public void setCode(String code){
+		this.code = code;
+	}
+
 	public void setDate(String date1){
 		String delim = null;
 		
@@ -86,9 +96,14 @@ public class Transaction implements Comparable<Transaction> {
 	public void setType(String type){
 		this.type = type;
 	}
-	
+
+	// IMPLEMENT DATE SORTING ON TRANSACTION ARRAYLISTS
 	public int compareTo(Transaction other) {
         return date.compareTo(other.date);
     }
 
+	// PRINT TRANSACTION DETAILS
+	public void printTransaction(){
+		System.out.println(this.code+"  "+this.name+"  "+this.date+"  "+this.amount+"  "+this.units+"   "+this.type);
+	}
 }

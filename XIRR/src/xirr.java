@@ -1,5 +1,8 @@
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.Math;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,27 +15,24 @@ public class xirr {
 	public Date[] dates;
 	public double xirr1=0.0;
 	
-	public xirr(Double[] a, String[] b, String delim){
-		if(a.length != b.length){
-			System.out.println("INCORRECT LENGTHS");
-			System.exit(0);
+	public xirr(List<Transaction> t){
+		int j=0;
+		this.cash = new double[t.size()+1];
+		this.dates = new Date[t.size()+1];
+		Transaction p;
+		for(j=0; j<t.size(); j++){
+			p = t.get(j);
+			this.cash[j] = p.getAmount();
+			this.dates[j] = p.getDate();
+			System.out.println(this.cash[j]+"   "+this.dates[j]);
 		}
-		else{
-			int j=0;
-			this.cash = new double[a.length];
-			this.dates = new Date[b.length];
-			SimpleDateFormat fmt = new SimpleDateFormat("dd"+delim.charAt(0)+"MM"+delim.charAt(0)+"yyyy");
-			for(j=0; j<a.length; j++){
-				this.cash[j] = a[j];
-			}
-			for(j=0; j<b.length; j++){
-				try {
-					this.dates[j] = fmt.parse(b[j]);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		double newamt = 0.0;
+		System.out.println("Enter total amount - ");
+		Scanner k = new Scanner(System.in);
+		newamt = k.nextDouble();
+		this.cash[j] = (newamt<0 ? (newamt) : (newamt*(-1)));
+		this.dates[j] = new Date();
+		System.out.println(this.cash[j]+"   "+this.dates[j]);
 	}
 	
 	public double sppv(double i, double n){
@@ -119,14 +119,49 @@ public class xirr {
 		return (double)xirr;
 	}
 	
-//	public static void main(String[] args){		
+	public static void main(String[] args){
+		ProcessTransaction p = new ProcessTransaction();
+		p.readData(args[0], 5, 8, 4, 7, 6, 2);
+		SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
+//		List<String> fundnames = p.fundNames();
+		p.getFunds();
+//		
+		try {
+			PrintWriter writer = new PrintWriter("19352_java.csv", "UTF-8");
+
+			for(int i=0; i<p.funds.size(); i++){
+				List<Transaction> trans1 = p.funds.get(i);
+				for(Transaction j : trans1){
+					j.printTransaction();
+					try {
+						writer.println(j.getCode()+","+fmt.format((Date)j.getDate())+","+j.getName()+","+j.getUnits()+","+j.getAmount()+","+j.getType());
+					} 
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+					p.trans.add(j);
+				}
+			}
+			writer.close();
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Collections.sort(p.trans);
+
 //		Double[] cash = new Double[]{2600.0,4000.0,2000.0,3000.0,4000.0,4000.0,-25000.0};
 //		String[] dates = new String[]{"01-01-2016","01-03-2016","01-05-2016","01-07-2016","01-08-2016","01-11-2016","01-12-2016"};
 //		
 //		Double[] cash = null;
 //		String[] dates = null;
-//				
-//		xirr x = new xirr(cash,dates,delim);
-//		x.calcXirr();
-//	}
+
+		System.out.println("\n\n\n --------------------------------------------\n\n\n");
+		xirr x = new xirr(p.trans);
+		x.calcXirr();
+	}
 }
