@@ -10,6 +10,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import TransactionHelper.ProcessTransaction;
+import TransactionHelper.Transaction;
+
 public class xirr {
 	public double[] cash;
 	public Date[] dates;
@@ -145,11 +148,9 @@ public class xirr {
 			writer.close();
 		}
 		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Collections.sort(p.trans);
